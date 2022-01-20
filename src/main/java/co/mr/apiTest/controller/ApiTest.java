@@ -5,6 +5,7 @@ import com.google.gson.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.InputStreamReader;
@@ -20,11 +21,11 @@ import java.util.List;
 public class ApiTest {
 
     @GetMapping("/apiTest")
-    public String apiTest(Model model) throws IOException{
+    public String apiTest(@RequestParam(value = "pageNo", required = false, defaultValue = "1") String pageNo, Model model) throws IOException{
         String date = "2022011010";
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/TourStnInfoService/getTourStnVilageFcst"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=NgM4AEfqR5lvPHpMnDdOqa1EgpcRUSBeiKmvLmo3RyleWNOBGKNWS%2FNPLpkP12MlI6GGER6keJzILgL2dnuUuQ%3D%3D"); /*Service Key*/
-        urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
+        urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode(pageNo, "UTF-8")); /*페이지번호*/
         urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
         urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8")); /*요청자료형식(XML/JSON)*/
         urlBuilder.append("&" + URLEncoder.encode("CURRENT_DATE", "UTF-8") + "=" + URLEncoder.encode(date, "UTF-8")); /*2016-12-01 01시부터 조회*/
@@ -62,6 +63,17 @@ public class ApiTest {
 //        System.out.println(responseObj);
         JsonObject bodyObj = responseObj.get("body").getAsJsonObject();
 
+        String totalCount = bodyObj.get("totalCount").toString();
+        int intTotalCount = Integer.parseInt(totalCount);
+        String numOfRows = bodyObj.get("numOfRows").toString();
+        int intNumOfRows = Integer.parseInt(numOfRows);
+
+        int totalPage = (int) Math.ceil(intTotalCount * 1.0 / intNumOfRows);
+
+
+//        System.out.println("totalCount : " + totalCount);
+//        System.out.println("numOfRows : " + numOfRows);
+
 //        System.out.println(bodyObj);
         JsonObject itemsObj = bodyObj.get("items").getAsJsonObject();
         JsonArray arrayData = itemsObj.get("item").getAsJsonArray();
@@ -89,7 +101,13 @@ public class ApiTest {
 //            System.out.println(tInfo.getCourseName());
 //            System.out.println(tInfo.getThema());
 //        }
+        int intPageNo = Integer.parseInt(pageNo);
+        model.addAttribute("pageNo", intPageNo);
+        model.addAttribute("maxPage", 5);
+        model.addAttribute("totalCount", totalCount);
+        model.addAttribute("totalPage", totalPage);
         model.addAttribute("tourInfos", tourInfos);
+
 
 //        sb.toString();
 //        Gson gson = new GsonBuilder().create();
