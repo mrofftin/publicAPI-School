@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table, th, td{
+            border:1px solid yellowgreen;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+<a href="/apiTest">서비스</a>
+<table>
+    <thead>
+        <th>테마</th>
+        <th>코스명</th>
+        <th>코스지역</th>
+        <th>관광지점</th>
+        <th>관광지명</th>
+        <th>풍속</th>
+        <th>하늘상태</th>
+        <th>습도</th>
+        <th>강수확률</th>
+    </thead>
+    <tr th:each="tourInfo : ${tourInfos}">
+        <td th:text="${tourInfo.getThema()}"></td>
+        <td th:text="${tourInfo.getCourseName()}"></td>
+        <td th:text="${tourInfo.getCourseAreaName()}"></td>
+        <td th:text="${tourInfo.getSpotAreaName()}"></td>
+        <td th:text="${tourInfo.getSpotName()}"></td>
+        <td th:text="${tourInfo.getWs()}"></td>
+        <td th:if="${tourInfo.getSky() == 1}" th:text="맑음"></td>
+        <td th:if="${tourInfo.getSky() == 2}" th:text="구름"></td>
+        <td th:if="${tourInfo.getSky() == 3}" th:text="흐림"></td>
+        <td th:if="${tourInfo.getSky() == 4}" th:text="비"></td>
+        <td th:if="${tourInfo.getSky() == 5}" th:text="소나기"></td>
+        <td th:if="${tourInfo.getSky() == 6}" th:text="비눈"></td>
+        <td th:if="${tourInfo.getSky() == 7}" th:text="눈비"></td>
+        <td th:if="${tourInfo.getSky() == 8}" th:text="눈"></td>
+        <td th:text="${tourInfo.getRhm()}"></td>
+        <td th:text="${tourInfo.getPop()+'%'}"></td>
+    </tr>
+</table>
+
+</body>
+</html>
